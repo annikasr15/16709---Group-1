@@ -1,0 +1,143 @@
+<robot name="swebot">
+    <link name="body">
+        <inertial>
+            <mass value="0.0114518" />
+            <origin xyz="-2.44022e-18 0.244527 0.00317227" rpy="0 -0 0" />
+            <inertia ixx="0.000170341" ixy="0" ixz="0" iyy="5.84826e-05" iyz="8.55268e-06" izz="0.000188564" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 -0 0" />
+            <geometry>
+                <mesh filename="package://swebot/meshes/body.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.615686_0.811765_0.929412_0.000000_0.000000">
+                <color rgba="0.615686 0.811765 0.929412 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://swebot/meshes/body.stl" scale="1 1 1" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="left_wheel">
+        <inertial>
+            <mass value="0.0015708" />
+            <origin xyz="0.025 -5.55112e-17 1.38778e-17" rpy="0 -0 0" />
+            <inertia ixx="7.85398e-06" ixy="0" ixz="0" iyy="4.25424e-06" iyz="0" izz="4.25424e-06" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.11 -0.323981 0.0460411" rpy="0 -0 0" />
+            <geometry>
+                <mesh filename="package://swebot/meshes/left_wheel.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.647059_0.647059_0.647059_0.000000_0.000000">
+                <color rgba="0.647059 0.647059 0.647059 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="-0.11 -0.323981 0.0460411" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://swebot/meshes/left_wheel.stl" scale="1 1 1" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="right_wheel">
+        <inertial>
+            <mass value="0.0015708" />
+            <origin xyz="-0.025 1.38778e-17 -5.55112e-17" rpy="-1.22818 0 0" />
+            <inertia ixx="7.85398e-06" ixy="0" ixz="0" iyy="4.25424e-06" iyz="0" izz="4.25424e-06" />
+        </inertial>
+        <visual>
+            <origin xyz="0.11 -0.065476 0.320618" rpy="-1.22818 0 0" />
+            <geometry>
+                <mesh filename="package://swebot/meshes/right_wheel.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.231373_0.380392_0.705882_0.000000_0.000000">
+                <color rgba="0.231373 0.380392 0.705882 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0.11 -0.065476 0.320618" rpy="-1.22818 0 0"/>
+            <geometry>
+                <mesh filename="package://swebot/meshes/right_wheel.stl" scale="1 1 1" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="caster_wheel">
+        <inertial>
+            <mass value="0.00019635" />
+            <origin xyz="-0.0125 1.38778e-17 2.77556e-17" rpy="0.194291 -0 0" />
+            <inertia ixx="2.45437e-07" ixy="0" ixz="0" iyy="1.32945e-07" iyz="0" izz="1.32945e-07" />
+        </inertial>
+        <visual>
+            <origin xyz="-0.0125 -0.0420722 0.0896041" rpy="0.194291 -0 0" />
+            <geometry>
+                <mesh filename="package://swebot/meshes/caster_wheel.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.768627_0.886275_0.952941_0.000000_0.000000">
+                <color rgba="0.768627 0.886275 0.952941 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="-0.0125 -0.0420722 0.0896041" rpy="0.194291 -0 0" />
+            <geometry>
+                <mesh filename="package://swebot/meshes/caster_wheel.stl" scale="1 1 1" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="caster_body">
+        <inertial>
+            <mass value="9.7853e-05" />
+            <origin xyz="-7.51743e-18 -0.0161785 -0.03648" rpy="0 -0 0" />
+            <inertia ixx="9.23048e-08" ixy="0" ixz="0" iyy="9.34998e-08" iyz="-2.89411e-08" izz="6.72287e-08" />
+        </inertial>
+        <visual>
+            <origin xyz="-5.42101e-18 -0.0557349 0.0335411" rpy="0 -0 0" />
+            <geometry>
+                <mesh filename="package://swebot/meshes/caster_body.stl" scale="1 1 1" />
+            </geometry>
+            <material name="0.972549_0.529412_0.003922_0.000000_0.000000">
+                <color rgba="0.972549 0.529412 0.00392157 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="-5.42101e-18 -0.0557349 0.0335411" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://swebot/meshes/caster_body.stl" scale="1 1 1" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="base_link" />
+    <joint name="fixed_node_to_root_joint" type="fixed">
+        <origin xyz="0.107547 -0.0678555 0.146" rpy="0 0 1.5708" />
+        <axis xyz="0 0 1" />
+        <parent link="base_link" />
+        <child link="body" />
+    </joint>
+    <joint name="revolute_1" type="continuous">
+        <origin xyz="0.11 0.323981 -0.0460411" rpy="-1.66848 0 0" />
+        <axis xyz="1 -0 -0" />
+        <parent link="body" />
+        <child link="left_wheel" />
+    </joint>
+    <joint name="revolute_2" type="continuous">
+        <origin xyz="-0.11 0.323981 -0.0460411" rpy="-1.11022e-16 0 0" />
+        <axis xyz="1 0 0" />
+        <parent link="body" />
+        <child link="right_wheel" />
+    </joint>
+    <joint name="revolute_3" type="continuous">
+        <origin xyz="0 0.0557349 -0.0335411" rpy="0 -0 0" />
+        <axis xyz="-0 -0 1" />
+        <parent link="body" />
+        <child link="caster_body" />
+    </joint>
+    <joint name="revolute_4" type="continuous">
+        <origin xyz="0.0125 -0.0317543 -0.0625" rpy="0 -0 0" />
+        <axis xyz="1 0 0" />
+        <parent link="caster_body" />
+        <child link="caster_wheel" />
+    </joint>
+</robot>
