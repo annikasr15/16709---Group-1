@@ -1,0 +1,469 @@
+<?xml version="1.0"?>
+<!--
+  Assignment 3, Task 4 — mount your Task 1 arm on this mobile base.
+
+  Everything below the materials block is DONE for you: chassis, two drive
+  wheels, a front caster, a 2D lidar, and an `arm_mount` plate on top. This
+  is provided infrastructure, not something to design — your only job is
+  the ARM SPLICE section near the bottom.
+
+  How to splice your arm in:
+    1. Open your completed Task 1 `arm.urdf`.
+    2. Copy the THREE joints (shoulder_pitch, elbow_pitch, wrist_pitch) and
+       THREE links (upper_arm, forearm, end_effector) into the marked
+       section below. Do NOT copy `base_link` — the `arm_mount` plate
+       below replaces it; you don't need two robot bases.
+    3. In the shoulder_pitch joint you just pasted, change
+         <parent link="base_link"/>
+       to
+         <parent link="arm_mount"/>
+       That's it — leave the joint's <origin> exactly as you wrote it in
+       Task 1. The 0.03 m your Task 1 base_link used to occupy just becomes
+       a harmless standoff between the plate and the shoulder.
+
+  Why this works: your arm's own root link happened to be named
+  "base_link" too — the exact name this mobile base's chassis already
+  uses. Two links can't share a name in one URDF, which is *why* you skip
+  pasting the arm's base_link rather than renaming something.
+-->
+<robot name="mobile_manipulator">
+
+  <material name="chassis_grey">
+    <color rgba="0.35 0.35 0.4 1.0"/>
+  </material>
+  <material name="wheel_black">
+    <color rgba="0.1 0.1 0.1 1.0"/>
+  </material>
+  <material name="caster_grey">
+    <color rgba="0.5 0.5 0.5 1.0"/>
+  </material>
+  <material name="lidar_red">
+    <color rgba="0.8 0.1 0.1 1.0"/>
+  </material>
+  <material name="mount_yellow">
+    <color rgba="0.9 0.7 0.1 1.0"/>
+  </material>
+  <material name="blue">
+    <color rgba="0.2 0.4 0.8 1.0"/>
+  </material>
+  <material name="orange">
+    <color rgba="0.9 0.5 0.1 1.0"/>
+  </material>
+  <material name="green">
+    <color rgba="0.2 0.7 0.3 1.0"/>
+  </material>
+
+  <!-- ============ base_link (chassis) — PROVIDED ============
+       Box 0.30 x 0.24 x 0.08 m, mass 5.0 kg. Origin is at wheel-axle
+       height (0.05 m off the ground = wheel radius), so the chassis box
+       is centered on it (spans z = -0.04 .. +0.04).
+  -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.30 0.24 0.08"/>
+      </geometry>
+      <material name="chassis_grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.30 0.24 0.08"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="5.0"/>
+      <inertia ixx="0.026667" iyy="0.040167" izz="0.061500"
+               ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ============ drive wheels — PROVIDED ============
+       Cylinders, radius 0.05 m, thickness 0.03 m, mass 0.3 kg each.
+       Track width 0.34 m (0.17 m each side of centerline). The cylinder's
+       own axis is Z; rpy="1.5708 0 0" rotates it onto Y so it rolls about
+       the joint's axis. The <inertial> origin carries the same rotation,
+       so ixx/iyy/izz below are the plain "cylinder spinning about Z"
+       formulas (izz = 1/2 m r^2 is the spin axis, about local Z before
+       rotation).
+  -->
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <origin xyz="0 0.17 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="left_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.03"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.03"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <mass value="0.3"/>
+      <inertia ixx="0.00021" iyy="0.00021" izz="0.000375"
+               ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <origin xyz="0 -0.17 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+
+  <link name="right_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.03"/>
+      </geometry>
+      <material name="wheel_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <cylinder radius="0.05" length="0.03"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <mass value="0.3"/>
+      <inertia ixx="0.00021" iyy="0.00021" izz="0.000375"
+               ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ============ caster — PROVIDED ============
+       Sphere, radius 0.025 m, mass 0.2 kg, mounted front centre. Note the
+       joint below is FIXED, not a roll axis: the sphere slides rather than
+       rolls, so it skids slightly as the robot turns. That skid shows up
+       as heading drift in the wheel odometry DiffDrive publishes, while
+       the travelled distance stays accurate.
+
+       This is not a bug to fix here — it is why Task 4 Part B needs a
+       localization component at all. Localization corrects that drift
+       against the map, so the robot still arrives at the goal.
+  -->
+  <joint name="caster_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_wheel"/>
+    <origin xyz="0.12 0 -0.025" rpy="0 0 0"/>
+  </joint>
+
+  <link name="caster_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.025"/>
+      </geometry>
+      <material name="caster_grey"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.025"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.2"/>
+      <inertia ixx="0.00005" iyy="0.00005" izz="0.00005"
+               ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ============ 2D lidar — PROVIDED ============
+       Mounted front-top, forward-facing. Mass 0.15 kg. The actual
+       <sensor> block (what makes this a real lidar in Gazebo) is in
+       gazebo_plugins_diffdrive_snippet.xml — this link is just its
+       mechanical mount point.
+  -->
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <origin xyz="0.13 0 0.10" rpy="0 0 0"/>
+  </joint>
+
+  <link name="lidar_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.04"/>
+      </geometry>
+      <material name="lidar_red"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.15"/>
+      <inertia ixx="0.0000538" iyy="0.0000538" izz="0.0000675"
+               ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ============ arm mount plate — PROVIDED ============
+       Thin box, 0.10 x 0.10 x 0.02 m, mass 0.3 kg, sitting flush on top
+       of the chassis. This is what your arm's shoulder joint attaches to.
+  -->
+  <joint name="arm_mount_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="arm_mount"/>
+    <origin xyz="0 0 0.05" rpy="0 0 0"/>
+  </joint>
+
+  <link name="arm_mount">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.10 0.10 0.02"/>
+      </geometry>
+      <material name="mount_yellow"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.10 0.10 0.02"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.3"/>
+      <inertia ixx="0.00026" iyy="0.00026" izz="0.0005"
+               ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ============ TODO: ARM SPLICE — paste your Task 1 arm here ============
+       Paste your shoulder_pitch joint + upper_arm link, elbow_pitch joint
+       + forearm link, and wrist_pitch joint + end_effector link from
+       arm.urdf below, unchanged, EXCEPT the shoulder_pitch joint's
+       <parent link="..."/> which must read "arm_mount" (see header
+       comment above). Do not paste base_link or its joint.
+  -->
+
+  <link name="upper_arm">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://arm_description/meshes/upper_arm.stl"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://arm_description/meshes/upper_arm.stl"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0.150" rpy="0 0 0"/>
+      <mass value="1.590431"/>
+      <inertia ixx="1.217674e-02" ixy="0" ixz="0" iyy="1.217674e-02" iyz="0" izz="4.970098e-04"/>
+    </inertial>
+  </link>
+
+  <joint name="shoulder_pitch" type="revolute">
+    <parent link="arm_mount"/>
+    <child link="upper_arm"/>
+    <origin xyz="0 0 0.030" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="10" velocity="1.0"/>
+  </joint>
+
+  <!-- ============ TODO: elbow_pitch joint + forearm link ============
+       - parent: upper_arm, child: forearm
+       - joint origin: top face of upper_arm -> xyz="0 0 <upper_arm h>"
+       - axis: "0 1 0"
+       - limit: a real elbow does NOT hyperextend backward past straight.
+         Pick lower/upper so 0 = straight and it can only fold one way,
+         up to 150 degrees.
+       - forearm link: mesh forearm.stl, inertial from datasheet
+  -->
+
+  <link name="forearm">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://arm_description/meshes/forearm.stl"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://arm_description/meshes/forearm.stl"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0.1250" rpy="0 0 0"/>
+      <mass value="0.848230"/>
+      <inertia ixx="4.502688e-03" ixy="0" ixz="0" iyy="4.502688e-03" iyz="0" izz="1.696460e-04"/>
+    </inertial>
+  </link>
+
+  <joint name="elbow_pitch" type="revolute">
+    <parent link="upper_arm"/>
+    <child link="forearm"/>
+    <origin xyz="0 0 0.30" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0" upper="2.61799" effort="10" velocity="1.0"/>
+  </joint>
+
+
+  <!-- ============ TODO: wrist_pitch joint + end_effector link ============
+       - parent: forearm, child: end_effector
+       - joint origin: top face of forearm -> xyz="0 0 <forearm h>"
+       - axis: "0 1 0"
+       - limit: wrist range +/-45 deg
+       - end_effector link: mesh end_effector.stl, inertial from datasheet
+  -->
+
+<link name="end_effector">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://arm_description/meshes/end_effector.stl"/>
+      </geometry>
+      <material name="green"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://arm_description/meshes/end_effector.stl"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0.0500" rpy="0 0 0"/>
+      <mass value="0.190852"/>
+      <inertia ixx="1.697785e-04" ixy="0" ixz="0" iyy="1.697785e-04" iyz="0" izz="2.147082e-05"/>
+    </inertial>
+  </link>
+
+  <joint name="wrist_pitch" type="revolute">
+    <parent link="forearm"/>
+    <child link="end_effector"/>
+    <origin xyz="0 0 0.250" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.785398" upper="0.785398" effort="10" velocity="1.0"/>
+  </joint>
+
+  <!-- ============ end ARM SPLICE ============ -->
+
+  <gazebo>
+    <plugin filename="gz-sim-diff-drive-system"
+            name="gz::sim::systems::DiffDrive">
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>0.34</wheel_separation>
+      <wheel_radius>0.05</wheel_radius>
+      <topic>/cmd_vel</topic>
+      <odom_topic>odom</odom_topic>
+      <frame_id>odom</frame_id>
+      <child_frame_id>base_link</child_frame_id>
+      <odom_publish_frequency>30</odom_publish_frequency>
+      <tf_topic>/tf</tf_topic>
+      <max_linear_acceleration>1.0</max_linear_acceleration>
+      <min_linear_acceleration>-1.0</min_linear_acceleration>
+      <max_angular_acceleration>2.0</max_angular_acceleration>
+      <min_angular_acceleration>-2.0</min_angular_acceleration>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin filename="gz-sim-joint-state-publisher-system"
+            name="gz::sim::systems::JointStatePublisher"/>
+  </gazebo>
+
+  <gazebo reference="lidar_link">
+    <sensor name="lidar" type="gpu_lidar">
+      <topic>scan</topic>
+      <update_rate>10</update_rate>
+      <always_on>1</always_on>
+      <visualize>true</visualize>
+      <gz_frame_id>lidar_link</gz_frame_id>
+      <lidar>
+        <!-- 320 deg, not a full 360. The arm you splice on stands at the
+            chassis centre, 0.13 m directly behind this lidar, so a
+            full-circle scan sees the arm itself: returns that land inside
+            the robot's own footprint, which Nav2's collision_monitor reads
+            as a permanent imminent collision. Blanking the rear arc is the
+            normal fix for a sensor that can see part of its own robot. -->
+        <scan>
+          <horizontal>
+            <samples>320</samples>
+            <resolution>1</resolution>
+            <min_angle>-2.79253</min_angle>
+            <max_angle>2.79253</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>8.0</max>
+          <resolution>0.01</resolution>
+        </range>
+      </lidar>
+    </sensor>
+  </gazebo>
+
+  <gazebo>
+    <plugin filename="gz-sim-joint-position-controller-system"
+            name="gz::sim::systems::JointPositionController">
+      <joint_name>shoulder_pitch</joint_name>
+      <p_gain>50.0</p_gain>
+      <i_gain>0.0</i_gain>
+      <d_gain>5.0</d_gain>
+      <i_max>1.0</i_max>
+      <i_min>-1.0</i_min>
+      <cmd_max>10</cmd_max>
+      <cmd_min>-10</cmd_min>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin filename="gz-sim-joint-position-controller-system"
+            name="gz::sim::systems::JointPositionController">
+      <joint_name>elbow_pitch</joint_name>
+      <p_gain>50.0</p_gain>
+      <i_gain>0.0</i_gain>
+      <d_gain>5.0</d_gain>
+      <i_max>1.0</i_max>
+      <i_min>-1.0</i_min>
+      <cmd_max>10</cmd_max>
+      <cmd_min>-10</cmd_min>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin filename="gz-sim-joint-position-controller-system"
+            name="gz::sim::systems::JointPositionController">
+      <joint_name>wrist_pitch</joint_name>
+      <p_gain>50.0</p_gain>
+      <i_gain>0.0</i_gain>
+      <d_gain>5.0</d_gain>
+      <i_max>1.0</i_max>
+      <i_min>-1.0</i_min>
+      <cmd_max>10</cmd_max>
+      <cmd_min>-10</cmd_min>
+    </plugin>
+  </gazebo>
+
+</robot>
