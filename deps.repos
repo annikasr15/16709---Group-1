@@ -1,0 +1,5 @@
+repositories:
+  m-explore-ros2:
+    type: git
+    url: https://github.com/robo-friends/m-explore-ros2.git
+    version: jazzy    # match your ROS distro
