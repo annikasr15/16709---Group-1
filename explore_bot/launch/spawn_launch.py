@@ -18,15 +18,10 @@ ROBOT_FILE = os.path.join(PROJECT, 'urdf', 'swebot.urdf')
 WORLD_NAME = 'arena'
 ROBOT_NAME = 'swebot'
 
+
 def generate_launch_description():
     with open(ROBOT_FILE) as f:
         robot_description = f.read()
-
-    # gz_models = os.path.join(PROJECT, '.gz_models')
-    # os.makedirs(gz_models, exist_ok=True)
-    # swebot_link = os.path.join(gz_models, 'swebot')
-    # if not os.path.lexists(swebot_link):
-    #     os.symlink(PROJECT, swebot_link)
 
     gz_launch_path = os.path.join(
         get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')

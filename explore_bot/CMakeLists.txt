@@ -3,7 +3,7 @@ project(explore_bot)
 
 find_package(ament_cmake REQUIRED)
 
-install(DIRECTORY urdf worlds maps config launch scripts meshes
+install(DIRECTORY urdf worlds maps config launch scripts meshes rviz
   DESTINATION share/${PROJECT_NAME}
 )
 

@@ -38,7 +38,7 @@ def generate_launch_description():
         DeclareLaunchArgument('use_sim_time', default_value='true'),
         DeclareLaunchArgument(
             'rviz_config',
-            default_value=os.path.join(pkg_share, 'rviz', 'nav_explore.rviz'),
+            default_value=os.path.join(pkg_share, 'rviz', 'explore.rviz'),
             description='RViz config loaded at startup'),
         DeclareLaunchArgument(
             'explore_params',
