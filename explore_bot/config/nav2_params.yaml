@@ -477,6 +477,3 @@ loopback_simulator:
     scan_angle_increment: 0.02617
     scan_use_inf: true
 
-
-docking_server:
-  ros__parameters:

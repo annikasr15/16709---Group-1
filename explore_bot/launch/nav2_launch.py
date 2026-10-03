@@ -54,27 +54,8 @@ def generate_launch_description():
     # TODO: assemble your autonomy stack here.
 
     # discover (relevant) files 
-    pkg_share = get_package_share_directory('mobile_manipulator_description')
+    pkg_share = get_package_share_directory('explore_bot')
     params_file = os.path.join(pkg_share, 'config', 'nav2_params.yaml')
-    map_yaml_path = os.path.join(pkg_share, 'maps', 'map.yaml')
-
-
-    # map_server_node = Node(
-    #     package='nav2_map_server',
-    #     executable='map_server',
-    #     name='map_server',
-    #     output='screen',
-    #     parameters=[{'yaml_filename': map_yaml_path}]
-    # )
-
-    # # for localization
-    # amcl_node = Node(
-    #     package='nav2_amcl',
-    #     executable='amcl',
-    #     name='amcl',
-    #     output='screen',
-    #     parameters=[params_file]
-    # )
 
     planner_node = Node(
         package='nav2_planner',
@@ -108,17 +89,6 @@ def generate_launch_description():
         parameters=[params_file]
     )
 
-    lifecycle_manager_localization = Node(
-        package='nav2_lifecycle_manager',
-        executable='lifecycle_manager',
-        name='lifecycle_manager_localization',
-        output='screen',
-        parameters=[{
-            'autostart': True,
-            'node_names': ['map_server', 'amcl']
-        }]
-    )
-
     lifecycle_manager_navigation = Node(
         package='nav2_lifecycle_manager',
         executable='lifecycle_manager',
@@ -131,13 +101,9 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        # your components go here
-        map_server_node, 
-        amcl_node,
         planner_node,
         controller_node,
         behavior_node,
         bt_navigator_node,
-        lifecycle_manager_localization,
         lifecycle_manager_navigation
     ])
