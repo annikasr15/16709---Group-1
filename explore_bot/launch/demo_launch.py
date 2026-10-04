@@ -48,11 +48,11 @@ from launch_ros.actions import Node, SetParameter
 # Start positions (x, y, yaw) in the Gazebo world frame: meters, meters, radians.
 # PLACEHOLDERS - replace with your 5 positions.
 SCENARIOS = [
-    (0.0, 0.0, 0.0),     # scenario 1
-    (1.0, -3.5, 0.0),    # scenario 2
-    (-2.0, 2.0, 0.0),    # scenario 3
-    (2.0, 2.0, 0.0),     # scenario 4
-    (-2.0, -2.0, 0.0),   # scenario 5
+    (0.0, 0.0, 0.2),     # scenario 1
+    (-3.0, 0, 0.2),    # scenario 2
+    (2.0, 2.0, 0.2),    # scenario 3
+    (2.0, -2.5, 0.2),     # scenario 4
+    (-3.0, -2.0, 0.2),   # scenario 5
 ]
 
 # True = no Gazebo window and no RViz (faster). False = show both.
