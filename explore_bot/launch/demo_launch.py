@@ -56,7 +56,7 @@ SCENARIOS = [
 ]
 
 # True = no Gazebo window and no RViz (faster). False = show both.
-HEADLESS = True
+HEADLESS = False
 
 # Metrics script. PLACEHOLDER - point this at your teammate's file.
 # It runs right after each scenario finishes, while the simulation and map are
